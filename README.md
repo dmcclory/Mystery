@@ -2,6 +2,10 @@ A tracing gem... for making it easy to trace execution and extract meaningful kn
 
 - it just needs to be useful, for me
 
+- list of variables to watch
+- list of variables to exclude
+- list of functions to watch
+
 - it should let someone who doesn't know about set_trace_func get something useful out of it
   - if people want to mega-customize it, they can just write their own trace_func
 
@@ -21,30 +25,24 @@ A tracing gem... for making it easy to trace execution and extract meaningful kn
 - custom code - block is passed in, evaluated at each step
   - augment it
 
-- don't stomp on an already defined set_trace_func
-  - maybe you can have more than one by default?
-  - NOPE
-  - but you can use set_trace_func itself to capture new trace funcs
-  - nope, can't capture the procs which are passed to set trace func
-  - (though of course, I could)
-  - or you could block anyone else from using set trace_func
-  - or just puts some output before letting it run
-  - you could use raise to prevent code from running
-    - but you can't have a globa rescue w/o a begin, it looks like
-
-- list of variables to watch
-- list of variables to exclude
-- list of functions to watch
-
 
 - watchpoints?
 
 - wow, if you modify the inputs at a certain step
   - and check to see if the error occurs ....
 
+- don't stomp on an already defined set_trace_func
+  - can't have more than one by default?
+  - but you can use set_trace_func itself to capture new trace funcs
+  - you could *maybe* grab the proc being passed in to another set_trace_fun
+    - nope, can't capture the procs which are passed to set trace func
 
 - statsd output?
 
-- random
-  - works with JRuby
-  - works with ruby 1.9
+- random Qs
+  - other rubies?
+    - works with JRuby
+    - works with ruby 1.9
+
+  - does it trace methods you invoke in your own trace func?
+    - NOPE! "Tracing is disabled within the context of proc." - from ri docs
