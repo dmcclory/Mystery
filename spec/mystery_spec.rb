@@ -78,6 +78,25 @@ describe Mystery do
       end
     end
 
+    context "selecting methods" do
+      it "matches any method name"
+    end
+
+    context "selecting line numbers" do
+      it "can take a Range of line numbers"
+      it "can take a list of line numbers"
+    end
+
+    context "selecting context objects" do
+      # this is a special case of variable selection
+      # need to use eval('self') but want to make that easier for people
+      it "takes a list of objects as the context"
+    end
+
+    context "selecting based on class name" do
+
+    end
+
     context "selecting varibles to output" do
 
       let(:foo_bar_baz_binding) {
