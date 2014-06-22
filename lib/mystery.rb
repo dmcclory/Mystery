@@ -2,10 +2,13 @@
 class Mystery
 
   def initialize(opts)
+    @output = opts[:output] || STDOUT
     @path = Regexp.new opts[:path]
-    @proc = lambda { |event, file, line, id, binding, classname|
-      if file =~ @path
-        puts [event, file, line, id, binding_to_hash(binding).inspect, classname].inspect
+    @events = opts[:events]
+    @variables = opts[:variables] || []
+    @trace_func = lambda { |event, file, line, id, binding, classname|
+      if file =~ @path && @events.any? { |x| x == event }
+        @output.puts [event, file, line, id, binding_to_hash(binding).inspect, classname].inspect
       end
     }
 
@@ -13,17 +16,27 @@ class Mystery
   end
 
   def start!
-    set_trace_func @proc
+    Kernel.set_trace_func trace_func
+    self
   end
 
   def stop!
-    set_trace_func @empty_proc
+    Kernel.set_trace_func blank_trace_func
+    self
+  end
+
+  def trace_func
+    @trace_func
+  end
+
+  def blank_trace_func
+
   end
 
   private
 
   def binding_to_hash(binding)
-    vars = binding.eval('local_variables') + [:self]
+    vars = (binding.eval('local_variables') + [:self]).select { |var| @variables.include? var }
     hash = vars.inject({}) { |memo, var|
       val = binding.eval(var.to_s)
       if val == self
