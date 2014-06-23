@@ -17,6 +17,19 @@ A tracing gem... for making it easy to trace execution and extract meaningful kn
   - or a :rails_mode => true
   - or we only print out changes after the first
 
+- query-ability is striking me as *very* important
+  - the first thing you'd do when you got the output is to try to parse it
+  - why not skip the 2 steps and give them something they can use?
+
+- when you have hundreds of rows of well structured, 6-tuples ... you basically have a database table
+  - and many Ruby programmers like the style of
+  - thinking of emulating the active record interface
+  - or using axiom (and whatever other useful pieces of the ROM ecosystem)
+
+- just shovel every place into a growing list for now
+  - provide a wrapper method for accessing variables from the binding
+  - make sure to stop! before you start poking around with the results
+
 - would be cool if you could use it in rails mode so that you change config between requests
 
 - pass it a file handle or path, or let it write to a default location
@@ -24,6 +37,12 @@ A tracing gem... for making it easy to trace execution and extract meaningful kn
 
 - custom code - block is passed in, evaluated at each step
   - augment it
+
+- custom formatter
+  - either an 'sprintf' style string
+  - or a printer object, with 1 method
+    - that's like a fancy name for yielding the block though.
+    - people could just use set_trace_func at that point
 
 
 - watchpoints?
