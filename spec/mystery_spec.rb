@@ -51,9 +51,9 @@ describe Mystery do
   describe "trace_func" do
     let(:output_loc) { StringIO.new }
     let(:output) { output_loc.rewind; output_loc.read }
+    let(:empty_binding) { EMPTY_BINDING }
 
     context "selecting events to output" do
-      let(:empty_binding) { EMPTY_BINDING }
       let(:c_call_event) {
         ['c-call', 'bar/baz/foo.rb', 30, :awesome, empty_binding, Object.new]
       }
@@ -87,10 +87,43 @@ describe Mystery do
       it "can take a list of line numbers"
     end
 
+    context "selecting based on file name" do
+      let(:foo_event) {
+        ['c-call', 'foo.rb', 30, :awesome, empty_binding, Class.new ]
+      }
+      let(:bar_event) {
+        ['c-call', 'bar.rb', 30, :awesome, empty_binding, Class.new ]
+      }
+      it "matches anything if the string is empty or nil" do
+        m = Mystery.new({ :events => ['c-call'], :output => output_loc})
+        m.trace_func.call(*foo_event)
+        m.trace_func.call(*bar_event)
+        expect(output).to match /foo/
+        expect(output).to match /bar/
+      end
+    end
+
     context "selecting context objects" do
       # this is a special case of variable selection
       # need to use eval('self') but want to make that easier for people
-      it "takes a list of objects as the context"
+      let(:awesome) { Object.new }
+      let(:awesome_binding) {
+        awesome.instance_eval { k = 40000; binding }
+      }
+      let(:awesome_event) {
+        ['c-call', 'great.rb', 30, :so_cool, awesome_binding, Class.new]
+      }
+      let(:lame_event) {
+        ['c-call', 'great.rb', 30, :method_missing, lame_binding, Class.new]
+      }
+      let(:lame_binding) { Object.new.instance_eval { k = 3000; binding } }
+      it "takes a list of objects as the context" do
+        m = Mystery.new({ :path => "great.rb", :events => ['c-call'], :contexts => [awesome], :output => output_loc})
+        m.trace_func.call(*awesome_event)
+        m.trace_func.call(*lame_event)
+        expect(output).to match /so_cool/
+        expect(output).not_to match /method_missing/
+      end
     end
 
     context "selecting based on class name" do
