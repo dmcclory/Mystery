@@ -7,8 +7,9 @@ class Mystery
     @events = opts[:events]
     @variables = opts[:variables] || []
     @contexts  = opts[:contexts] || []
+    @methods   = opts[:methods]  || []
     @trace_func = lambda { |event, file, line, id, binding, classname|
-      if acceptable_file?(file) && @events.any? { |x| x == event } && acceptable_context?(binding.eval('self'))
+      if acceptable_file?(file) && acceptable_method?(id) && @events.any? { |x| x == event } && acceptable_context?(binding.eval('self'))
         @output.puts [event, file, line, id, binding_to_hash(binding).inspect, classname].inspect
       end
     }
@@ -44,6 +45,11 @@ class Mystery
   def acceptable_file? filename
     return true if @path.nil?
     @path =~ filename
+  end
+
+  def acceptable_method? method
+    return true if @methods.empty?
+    @methods.any? { |m| m == method }
   end
 
   def binding_to_hash(binding)

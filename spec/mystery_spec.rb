@@ -79,7 +79,31 @@ describe Mystery do
     end
 
     context "selecting methods" do
-      it "matches any method name"
+      let(:cool_event) {
+        ['c-call', 'foo.rb', 30, :cool, empty_binding, Class.new]
+      }
+      let(:awesome_event) {
+        ['c-call', 'foo.rb', 30, :awesome, empty_binding, Class.new]
+      }
+      context "initialized with a list of method names" do
+        it "matches any method name" do
+          m = Mystery.new({ :methods => [:awesome], :events => ['c-call'], :output => output_loc})
+          m.trace_func.call(*awesome_event)
+          m.trace_func.call(*cool_event)
+          expect(output).to match /awesome/
+          expect(output).not_to match /cool/
+        end
+      end
+      context "initialized without a list of methods" do
+        it "matches any method name" do
+          m = Mystery.new({ :events => ['c-call'], :output => output_loc})
+          m.trace_func.call(*awesome_event)
+          m.trace_func.call(*cool_event)
+          expect(output).to match /awesome/
+          expect(output).to match /cool/
+        end
+      end
+
     end
 
     context "selecting line numbers" do
