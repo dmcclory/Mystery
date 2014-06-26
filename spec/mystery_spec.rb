@@ -58,11 +58,11 @@ describe Mystery do
         ['c-call', 'bar/baz/foo.rb', 30, :awesome, empty_binding, Object.new]
       }
       it "stores the events in an array" do
-    #    m = Mystery.new({ :path => "/foo", :event_names => ['c-call'], :output => output_loc})
-    #    m.trace_func.call(*c_call_event)
-    #    m.trace_func.call(*c_call_event)
-    #    expect(m.events.count).to equal 2
-    #    expect(m.events[0]).to eq c_call_event
+        m = Mystery.new({ :path => "/foo", :event_names => ['c-call'], :output => output_loc})
+        m.trace_func.call(*c_call_event)
+        m.trace_func.call(*c_call_event)
+        expect(m.events.count).to equal 2
+        expect(m.events[0].class).to eq Mystery::EventWrapper
       end
     end
 

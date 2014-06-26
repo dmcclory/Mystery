@@ -31,7 +31,7 @@ class Mystery
     end
   end
 
-  attr_reader :traces
+  attr_reader :events
 
   def initialize(opts)
     @output = opts[:output] || STDOUT
@@ -40,9 +40,9 @@ class Mystery
     @variables = opts[:variables] || []
     @contexts  = opts[:contexts] || []
     @methods   = opts[:methods]  || []
-    @traces    = []
+    @events    = []
     @trace_func = lambda { |event, file, line, id, binding, classname|
-      @traces << [event, file, line, id, binding, classname]
+      @events << EventWrapper.new(event, file, line, id, binding, classname)
       if acceptable_file?(file) && acceptable_method?(id) && @event_names.any? { |x| x == event } && acceptable_context?(binding.eval('self'))
         @output.puts [event, file, line, id, binding_to_hash(binding).inspect, classname].inspect
       end
