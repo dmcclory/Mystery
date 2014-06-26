@@ -36,14 +36,14 @@ class Mystery
   def initialize(opts)
     @output = opts[:output] || STDOUT
     @path = opts[:path] ? Regexp.new(opts[:path]) : nil
-    @events = opts[:events] || []
+    @event_names = opts[:event_names] || []
     @variables = opts[:variables] || []
     @contexts  = opts[:contexts] || []
     @methods   = opts[:methods]  || []
     @traces    = []
     @trace_func = lambda { |event, file, line, id, binding, classname|
       @traces << [event, file, line, id, binding, classname]
-      if acceptable_file?(file) && acceptable_method?(id) && @events.any? { |x| x == event } && acceptable_context?(binding.eval('self'))
+      if acceptable_file?(file) && acceptable_method?(id) && @event_names.any? { |x| x == event } && acceptable_context?(binding.eval('self'))
         @output.puts [event, file, line, id, binding_to_hash(binding).inspect, classname].inspect
       end
     }

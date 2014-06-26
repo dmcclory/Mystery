@@ -58,7 +58,7 @@ describe Mystery do
         ['c-call', 'bar/baz/foo.rb', 30, :awesome, empty_binding, Object.new]
       }
       it "stores the events in an array" do
-    #    m = Mystery.new({ :path => "/foo", :events => ['c-call'], :output => output_loc})
+    #    m = Mystery.new({ :path => "/foo", :event_names => ['c-call'], :output => output_loc})
     #    m.trace_func.call(*c_call_event)
     #    m.trace_func.call(*c_call_event)
     #    expect(m.events.count).to equal 2
@@ -75,7 +75,7 @@ describe Mystery do
       }
 
       it "ands together the columns" do
-        m = Mystery.new({ :path => "/foo", :events => ['c-call'], :output => output_loc})
+        m = Mystery.new({ :path => "/foo", :event_names => ['c-call'], :output => output_loc})
         m.trace_func.call(*return_event)
         m.trace_func.call(*c_call_event)
         expect(output).to match /c-call/
@@ -83,7 +83,7 @@ describe Mystery do
       end
 
       it "ors together multiple arguments to a column" do
-        m = Mystery.new({ :path => "/foo", :events => ['c-call', 'return'], :output => output_loc})
+        m = Mystery.new({ :path => "/foo", :event_names => ['c-call', 'return'], :output => output_loc})
         m.trace_func.call(*return_event)
         m.trace_func.call(*c_call_event)
         expect(output).to match /c-call/
@@ -100,7 +100,7 @@ describe Mystery do
       }
       context "initialized with a list of method names" do
         it "matches any method name" do
-          m = Mystery.new({ :methods => [:awesome], :events => ['c-call'], :output => output_loc})
+          m = Mystery.new({ :methods => [:awesome], :event_names => ['c-call'], :output => output_loc})
           m.trace_func.call(*awesome_event)
           m.trace_func.call(*cool_event)
           expect(output).to match /awesome/
@@ -109,7 +109,7 @@ describe Mystery do
       end
       context "initialized without a list of methods" do
         it "matches any method name" do
-          m = Mystery.new({ :events => ['c-call'], :output => output_loc})
+          m = Mystery.new({ :event_names => ['c-call'], :output => output_loc})
           m.trace_func.call(*awesome_event)
           m.trace_func.call(*cool_event)
           expect(output).to match /awesome/
@@ -132,7 +132,7 @@ describe Mystery do
         ['c-call', 'bar.rb', 30, :awesome, empty_binding, Class.new ]
       }
       it "matches anything if the string is empty or nil" do
-        m = Mystery.new({ :events => ['c-call'], :output => output_loc})
+        m = Mystery.new({ :event_names => ['c-call'], :output => output_loc})
         m.trace_func.call(*foo_event)
         m.trace_func.call(*bar_event)
         expect(output).to match /foo/
@@ -155,7 +155,7 @@ describe Mystery do
       }
       let(:lame_binding) { Object.new.instance_eval { k = 3000; binding } }
       it "takes a list of objects as the context" do
-        m = Mystery.new({ :path => "great.rb", :events => ['c-call'], :contexts => [awesome], :output => output_loc})
+        m = Mystery.new({ :path => "great.rb", :event_names => ['c-call'], :contexts => [awesome], :output => output_loc})
         m.trace_func.call(*awesome_event)
         m.trace_func.call(*lame_event)
         expect(output).to match /so_cool/
@@ -181,7 +181,7 @@ describe Mystery do
       }
 
       it "only displays variables specified by the user" do
-        m = Mystery.new({ :path => "great.rb", :events => ['c-call'], :variables => [:foo, :bar], :output => output_loc})
+        m = Mystery.new({ :path => "great.rb", :event_names => ['c-call'], :variables => [:foo, :bar], :output => output_loc})
         m.trace_func.call(*foo_bar_baz_event)
         expect(output).to     match /foo/
         expect(output).to     match /bar/
