@@ -21,10 +21,20 @@ A tracing gem... for making it easy to trace execution and extract meaningful kn
   - the first thing you'd do when you got the output is to try to parse it
   - why not skip the 2 steps and give them something they can use?
 
+- maybe add accessor objects
+  - something like `event.event_name == 'c_call'` or `event.binding['x'] == 200`
+  - the binding will need to rescue NameErrors & return some kind of nil/var not found object
+
+- throw it away and write it again!
+
 - when you have hundreds of rows of well structured, 6-tuples ... you basically have a database table
   - and many Ruby programmers like the style of
   - thinking of emulating the active record interface
   - or using axiom (and whatever other useful pieces of the ROM ecosystem)
+    - played around with axiom, feels like overkill
+    - the queries will not be easy to write
+    - there's a lot of overhead, different classes for different operations that have been performed on the relation
+    - no easy way to just pull out the values, is how it seemed to me
 
 - just shovel every place into a growing list for now
   - provide a wrapper method for accessing variables from the binding

@@ -1,14 +1,48 @@
 
 class Mystery
+  class EventWrapper
+    attr_reader :event_name
+    attr_reader :file_name
+    attr_reader :line
+    attr_reader :method
+    attr_reader :class_name
+
+    def initialize(event_name, file_name, line, method, binding, class_name)
+      @event_name = event_name
+      @file_name = file_name
+      @line = line
+      @method = method
+      @binding = binding
+      @binding_hash = binding_to_hash(binding)
+      @class_name = class_name
+    end
+
+    def binding
+      @binding_hash
+    end
+
+    private
+    def binding_to_hash(binding)
+      vars = binding.eval('local_variables') + [:self]
+      vars.inject({}) { |memo, var|
+        memo[var] = binding.eval var.to_s
+        memo
+      }
+    end
+  end
+
+  attr_reader :traces
 
   def initialize(opts)
     @output = opts[:output] || STDOUT
     @path = opts[:path] ? Regexp.new(opts[:path]) : nil
-    @events = opts[:events]
+    @events = opts[:events] || []
     @variables = opts[:variables] || []
     @contexts  = opts[:contexts] || []
     @methods   = opts[:methods]  || []
+    @traces    = []
     @trace_func = lambda { |event, file, line, id, binding, classname|
+      @traces << [event, file, line, id, binding, classname]
       if acceptable_file?(file) && acceptable_method?(id) && @events.any? { |x| x == event } && acceptable_context?(binding.eval('self'))
         @output.puts [event, file, line, id, binding_to_hash(binding).inspect, classname].inspect
       end

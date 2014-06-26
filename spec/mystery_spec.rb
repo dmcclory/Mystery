@@ -53,6 +53,19 @@ describe Mystery do
     let(:output) { output_loc.rewind; output_loc.read }
     let(:empty_binding) { EMPTY_BINDING }
 
+    context "for analyzing the events later on" do
+      let(:c_call_event) {
+        ['c-call', 'bar/baz/foo.rb', 30, :awesome, empty_binding, Object.new]
+      }
+      it "stores the events in an array" do
+    #    m = Mystery.new({ :path => "/foo", :events => ['c-call'], :output => output_loc})
+    #    m.trace_func.call(*c_call_event)
+    #    m.trace_func.call(*c_call_event)
+    #    expect(m.events.count).to equal 2
+    #    expect(m.events[0]).to eq c_call_event
+      end
+    end
+
     context "selecting events to output" do
       let(:c_call_event) {
         ['c-call', 'bar/baz/foo.rb', 30, :awesome, empty_binding, Object.new]
