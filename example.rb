@@ -7,7 +7,8 @@ require 'mystery'
 tracer_explicit = Mystery.new(
   path: "example.rb",
   method: :awesome,
-  event_names: ['call']
+  event_names: ['call'],
+  variables: [:x]
 )
 
 class Foo
