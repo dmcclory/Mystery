@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
 
   gem.authors      = ['Dan McClory']
   gem.email        = ['danmcclory@gmail.com']
-  gem.homepage     = ['https://github.com/dmcclory']
+  gem.homepage     = 'https://github.com/dmcclory'
 
   gem.required_ruby_version     = '>= 2.0.0'
   gem.required_rubygems_version = '>= 1.3.6'
