@@ -23,7 +23,7 @@ class Mystery
 
     private
     def binding_to_hash(binding)
-      vars = binding.eval('local_variables') + [:self]
+      vars = binding.local_variables + [:self]
       vars.inject({}) { |memo, var|
         memo[var] = binding.eval var.to_s
         memo
@@ -42,7 +42,7 @@ class Mystery
     @methods   = opts[:methods]  || []
     @events    = []
     @trace_func = lambda { |event, file, line, id, binding, classname|
-      @events << EventWrapper.new(event, file, line, id, binding, classname)
+      # @events << EventWrapper.new(event, file, line, id, binding, classname)
       if acceptable_file?(file) && acceptable_method?(id) && @event_names.any? { |x| x == event } && acceptable_context?(binding.eval('self'))
         @output.puts [event, file, line, id, binding_to_hash(binding).inspect, classname].inspect
       end
