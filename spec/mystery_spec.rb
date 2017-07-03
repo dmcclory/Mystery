@@ -181,12 +181,24 @@ describe Mystery do
         ['c-call', 'great.rb', 30, :awesome, foo_bar_baz_binding, Object.new]
       }
 
-      it "only displays variables specified by the user" do
-        m = Mystery.new({ :path => "great.rb", :event_names => ['c-call'], :variables => [:foo, :bar], :output => output_loc})
-        m.trace_func.call(*foo_bar_baz_event)
-        expect(output).to     match /foo/
-        expect(output).to     match /bar/
-        expect(output).not_to match /baz/
+      context 'given a list of variable names' do
+        it "only displays variables specified by the user" do
+          m = Mystery.new({ :path => "great.rb", :event_names => ['c-call'], :variables => [:foo, :bar], :output => output_loc})
+          m.trace_func.call(*foo_bar_baz_event)
+          expect(output).to     match /foo/
+          expect(output).to     match /bar/
+          expect(output).not_to match /baz/
+        end
+      end
+
+      context 'given an empty list of variable names' do
+        it "displays all in the binding variables" do
+          m = Mystery.new({ :path => "great.rb", :event_names => ['c-call'], :variables => [], :output => output_loc})
+          m.trace_func.call(*foo_bar_baz_event)
+          expect(output).to     match /foo/
+          expect(output).to     match /bar/
+          expect(output).to     match /baz/
+        end
       end
     end
   end

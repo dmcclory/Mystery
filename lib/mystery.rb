@@ -87,8 +87,12 @@ class Mystery
   end
 
   def binding_to_hash(binding)
-    vars = (binding.eval('local_variables') + [:self]).select { |var| @variables.include? var }
-    hash = vars.inject({}) { |memo, var|
+    vars = if @variables.empty?
+             binding.eval('local_variables') + [:self]
+           else 
+             (binding.eval('local_variables') + [:self]).select { |var| @variables.include? var }
+           end
+    vars.inject({}) { |memo, var|
       val = binding.eval(var.to_s)
       if val == self
         memo
