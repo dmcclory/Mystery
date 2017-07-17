@@ -8,37 +8,28 @@ describe Mystery do
     it "creates a trace_func based on a hash of arguments"
   end
 
-  describe "#start!" do
-    before do
-      allow(Kernel).to receive(:set_trace_func)
-    end
-    it "sets the process's trace_func to our custom trace func" do
-      expect(Kernel).to receive(:set_trace_func)
-      k = Mystery.new({:path => "/foo"})
-      expect(k).to receive(:trace_func)
-      k.start!
-    end
-    it "returns itself" do
-      m = Mystery.new({:path => "/foo"})
-      result = m.start!
-      expect(result).to equal m
-    end
-  end
+  context "starting to trace and also stopping" do
+    let(:k) { Mystery.new({:path => "/foo"}) }
+    let(:stub_trace) { double(:tracepoint) }
 
-  describe "#stop!" do
     before do
-      allow(Kernel).to receive(:set_trace_func)
+      allow(TracePoint).to receive(:new).and_return(stub_trace)
     end
-    it "sets the process's trace_func to an empty func" do
-      expect(Kernel).to receive(:set_trace_func)
-      m = Mystery.new({:path => "/foo"})
-      expect(m).to receive(:blank_trace_func)
-      m.stop!
+
+    describe "#start!" do
+      it "sets the process's trace_func to our custom trace func" do
+        k = Mystery.new({:path => "/foo"})
+        expect(stub_trace).to receive(:enable)
+        k.start!
+      end
     end
-    it "returns itself" do
-      m = Mystery.new({:path => "/foo"})
-      result = m.stop!
-      expect(result).to equal m
+
+    describe "#stop!" do
+      it "sets the process's trace_func to an empty func" do
+        k = Mystery.new({:path => "/foo"})
+        expect(stub_trace).to receive(:disable)
+        k.stop!
+      end
     end
   end
 

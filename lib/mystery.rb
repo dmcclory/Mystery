@@ -42,31 +42,31 @@ class Mystery
     @methods   = opts[:methods]  || []
     @events    = []
     @trace_func = lambda { |event, file, line, id, binding, classname|
-      # @events << EventWrapper.new(event, file, line, id, binding, classname)
       if acceptable_file?(file) && acceptable_method?(id) && @event_names.any? { |x| x == event } && acceptable_context?(binding.eval('self'))
         @output.puts [event, file, line, id, binding_to_hash(binding).inspect, classname].inspect
       end
     }
+    @tp_func = TracePoint.new(:call, :return, :line) do |tp|
+      if acceptable_file?(tp.path) && acceptable_method?(tp.method_id) && @event_names.any? { |x| x == tp.event.to_s } && acceptable_context?(tp.self)
+        @output.puts [tp.event, tp.path, tp.lineno, tp.method_id, binding_to_hash(tp.binding).inspect, tp.self.class].inspect
+      end
+    end
 
     @empty_proc = lambda { |event, file, line, id, binding, classname| }
   end
 
   def start!
-    Kernel.set_trace_func trace_func
+    @tp_func.enable
     self
   end
 
   def stop!
-    Kernel.set_trace_func blank_trace_func
+    @tp_func.disable
     self
   end
 
   def trace_func
     @trace_func
-  end
-
-  def blank_trace_func
-
   end
 
   private

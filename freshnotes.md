@@ -75,3 +75,18 @@ Obvious long term things
 
 - match on a class/ancestor name
 - show all arguments
+
+----------------------------------
+
+Ok, so it turns out 2.0 has TracePoint & it can do somme
+
+- it's global
+- it has a tp.return_value method, so you can get the return values
+- it has `enable/disable` semantics
+
+
+I think we want to make it so this actually wraps that object.
+
+it'd be nice to make cleaner output messages
+
+
